@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
+import { generateCareerPlan, gapAnalysis } from "@/lib/mlApi";
 
 export default function Dashboard() {
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -55,6 +56,20 @@ export default function Dashboard() {
       toast.success("Career trajectories generated!");
     } catch (error) {
       toast.error("Failed to generate trajectories");
+    }
+  };
+  const handleGenerateCareerPlan = async () => {
+    try {
+      toast("Generating your career plan...");
+      const result = await generateCareerPlan(
+        { extracted_skills: ["Python", "SQL", "Machine Learning"] },
+        { interests: ["AI", "Data Science"] }
+      );
+      console.log("Career plan response:", result);
+      toast.success("Career plan generated! Check console for details.");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Failed to generate career plan");
     }
   };
 
@@ -349,6 +364,16 @@ export default function Dashboard() {
                       </span>
                     </Link>
                   </Button>
+                  <Button onClick={handleGenerateCareerPlan} className="h-auto p-6 w-full" variant="outline">
+  <div className="flex flex-col items-center space-y-2">
+    <Play className="h-8 w-8 text-indigo-500" />
+    <span className="font-medium text-indigo-500">Generate Career Plan (AI)</span>
+    <span className="text-sm text-muted-foreground text-center">
+      Powered by your skills & interests.
+    </span>
+  </div>
+</Button>
+
                 </div>
               </CardContent>
             </Card>
